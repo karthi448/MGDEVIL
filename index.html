@@ -94,31 +94,39 @@
 
 
     <!-- ================= MAIN WORKSPACE APPLICATION INTERFACE ================= -->
-    <div id="main-application" class="flex flex-1 h-full w-full hidden opacity-0 transition-opacity duration-500 overflow-hidden">
+    <div id="main-application" class="flex flex-1 h-full w-full hidden opacity-0 transition-opacity duration-500 overflow-hidden relative">
         
-        <!-- SIDEBAR (Collapsable / Hidden on small devices) -->
-        <aside id="app-sidebar" class="w-64 border-r border-[#D2D2D7] bg-[#EAEAEA] bg-opacity-60 p-5 flex flex-col justify-between hidden lg:flex shrink-0">
+        <!-- SIDEBAR BACKDROP OVERLAY (Mobile Viewports Only) -->
+        <div id="sidebar-overlay" onclick="toggleSidebarMenu(false)" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-30 transition-opacity duration-300 opacity-0 pointer-events-none lg:hidden"></div>
+
+        <!-- RESPONSIVE SLIDE-OUT / DOCKABLE SIDEBAR (Registry Hub) -->
+        <aside id="app-sidebar" class="fixed inset-y-0 left-0 w-72 lg:w-64 border-r border-[#D2D2D7] bg-[#EAEAEA] bg-opacity-95 lg:bg-opacity-60 p-5 flex flex-col justify-between z-40 transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-300 ease-in-out shrink-0">
             <div>
-                <!-- Window controls -->
-                <div class="flex items-center space-x-2 px-1 mb-6">
-                    <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
-                    <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
-                    <span class="pl-2 font-semibold text-[10px] text-[#8E8E93] uppercase tracking-wider">Registry Hub</span>
+                <!-- Header Control Node with Close Button for Mobile views -->
+                <div class="flex items-center justify-between px-1 mb-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                        <span class="pl-2 font-semibold text-[10px] text-[#8E8E93] uppercase tracking-wider">Registry Hub</span>
+                    </div>
+                    <button onclick="toggleSidebarMenu(false)" class="lg:hidden text-xs font-bold text-[#8E8E93] hover:text-[#1D1D1F] p-1 bg-white bg-opacity-50 rounded-md">
+                        ✕ Close
+                    </button>
                 </div>
                 
                 <!-- Main Nav Options -->
                 <nav class="space-y-1">
-                    <button class="w-full flex items-center space-x-3 px-3 py-2 bg-white bg-opacity-70 rounded-lg text-sm font-semibold shadow-sm text-custom-accent text-left">
+                    <button onclick="toggleSidebarMenu(false)" class="w-full flex items-center space-x-3 px-3 py-2.5 bg-white bg-opacity-70 rounded-lg text-sm font-semibold shadow-sm text-custom-accent text-left">
                         <span>📊 Live Workspace</span>
                     </button>
-                    <button onclick="openAddMemberModal()" class="w-full flex items-center space-x-3 px-3 py-2 text-[#424245] hover:bg-white hover:bg-opacity-40 rounded-lg text-sm font-medium transition text-left">
+                    <button onclick="openAddMemberModal(); toggleSidebarMenu(false);" class="w-full flex items-center space-x-3 px-3 py-2.5 text-[#424245] hover:bg-white hover:bg-opacity-40 rounded-lg text-sm font-medium transition text-left">
                         <span>➕ Add New Member</span>
                     </button>
-                    <button onclick="exportToCSV()" class="w-full flex items-center space-x-3 px-3 py-2 text-[#424245] hover:bg-white hover:bg-opacity-40 rounded-lg text-sm font-medium transition text-left">
+                    <button onclick="exportToCSV(); toggleSidebarMenu(false);" class="w-full flex items-center space-x-3 px-3 py-2.5 text-[#424245] hover:bg-white hover:bg-opacity-40 rounded-lg text-sm font-medium transition text-left">
                         <span>📥 Export Data (.CSV)</span>
                     </button>
-                    <button onclick="removeAllMembers()" class="w-full flex items-center space-x-3 px-3 py-2 text-[#FF3B30] hover:bg-[#FFF2F1] rounded-lg text-sm font-medium transition text-left">
+                    <button onclick="removeAllMembers(); toggleSidebarMenu(false);" class="w-full flex items-center space-x-3 px-3 py-2.5 text-[#FF3B30] hover:bg-[#FFF2F1] rounded-lg text-sm font-medium transition text-left">
                         <span>⚠️ Remove All Members</span>
                     </button>
                 </nav>
@@ -149,14 +157,20 @@
             </div>
         </aside>
 
-        <!-- MAIN APP CONTENT -->
+        <!-- MAIN APP CONTENT VIEWPORT -->
         <main class="flex-1 flex flex-col min-w-0 bg-[#F5F5F7] h-full overflow-hidden">
             
-            <!-- Header -->
+            <!-- Header Frame -->
             <header class="apple-blur sticky top-0 z-10 px-4 md:px-6 py-4 border-b border-[#D2D2D7] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-[#1D1D1F]">Daily Attendance Portal</h1>
-                    <p class="text-[11px] text-[#8E8E93]" id="live-clock">Wednesday, August 12, 2026</p>
+                <div class="flex items-center space-x-3">
+                    <!-- Hamburger Switch for Drawer Sidebar Layout on Mobile viewports -->
+                    <button id="hamburger-menu-btn" onclick="toggleSidebarMenu(true)" class="p-2 bg-[#E3E3E6] hover:bg-[#D2D2D7] text-[#1D1D1F] text-sm rounded-lg font-bold flex items-center justify-center" title="Open Hub Menu">
+                        ☰ <span class="ml-1.5 text-xs font-semibold hidden sm:inline">Hub</span>
+                    </button>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold tracking-tight text-[#1D1D1F]">Daily Attendance Portal</h1>
+                        <p class="text-[11px] text-[#8E8E93]" id="live-clock">Wednesday, August 12, 2026</p>
+                    </div>
                 </div>
                 
                 <div class="flex items-center flex-wrap gap-2 w-full sm:w-auto">
@@ -164,8 +178,8 @@
                         <input type="text" id="table-search" oninput="filterRoster()" placeholder="Search name, department..." class="w-full sm:w-48 md:w-56 px-3 py-1.5 bg-[#E3E3E6] focus:bg-white border-none rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-custom-accent transition shadow-inner">
                     </div>
                     <!-- Small screen mobile dynamic utility commands -->
-                    <button onclick="openAddMemberModal()" class="lg:hidden p-1.5 bg-[#E3E3E6] hover:bg-[#D2D2D7] rounded-lg text-xs font-medium id-admin-element" title="Add New Member">➕</button>
-                    <button onclick="openSettingsModal()" class="lg:hidden p-1.5 bg-[#E3E3E6] hover:bg-[#D2D2D7] rounded-lg text-xs transition" title="System Settings">⚙️</button>
+                    <button onclick="openAddMemberModal()" class="p-1.5 bg-[#E3E3E6] hover:bg-[#D2D2D7] rounded-lg text-xs font-medium id-admin-element" title="Add New Member">➕</button>
+                    <button onclick="openSettingsModal()" class="p-1.5 bg-[#E3E3E6] hover:bg-[#D2D2D7] rounded-lg text-xs transition" title="System Settings">⚙️</button>
                     <button onclick="logout()" class="px-2.5 py-1.5 bg-[#E3E3E6] hover:bg-[#D2D2D7] text-[#FF3B30] font-semibold text-xs rounded-lg transition ml-auto sm:ml-0">
                         🔒 Sign Out
                     </button>
@@ -400,6 +414,20 @@
             checkAutoSaveSession();
         });
 
+        // ---------------- SLIDE DRAWER MANAGEMENT ----------------
+        function toggleSidebarMenu(open) {
+            const sidebar = document.getElementById('app-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (open) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('pointer-events-none', 'opacity-0');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('pointer-events-none', 'opacity-0');
+            }
+        }
+
         // ---------------- DYNAMIC THEME CONTROLLER ----------------
         function applyAccentTheme(themeName) {
             if(!THEME_MAP[themeName]) return;
@@ -520,7 +548,7 @@
                     document.getElementById('profile-display-name').innerText = "Admin Account";
                     document.getElementById('profile-display-email').innerText = "admin@gmail.com";
                     
-                    document.getElementById('app-sidebar').classList.remove('hidden');
+                    document.getElementById('hamburger-menu-btn').classList.remove('hidden');
                     document.getElementById('admin-metrics-block').classList.remove('hidden');
                     document.getElementById('th-actions-column').classList.remove('hidden');
                     document.getElementById('table-main-title').innerText = "Roster Registry Console";
@@ -529,11 +557,14 @@
                     document.getElementById('profile-display-name').innerText = "Staff Terminal";
                     document.getElementById('profile-display-email').innerText = "terminal@gmail.com";
 
-                    document.getElementById('app-sidebar').classList.add('hidden');
+                    document.getElementById('hamburger-menu-btn').classList.add('hidden');
                     document.getElementById('admin-metrics-block').classList.add('hidden');
                     document.getElementById('th-actions-column').classList.add('hidden');
                     document.getElementById('table-main-title').innerText = "Terminal Panel";
                     document.querySelectorAll('.id-admin-element').forEach(el => el.classList.add('hidden'));
+                    
+                    // Force shut drawer on non-admin
+                    toggleSidebarMenu(false);
                 }
 
                 setTimeout(() => { mainApp.classList.remove('opacity-0'); }, 50);
@@ -602,7 +633,7 @@
             container.innerHTML = depts.map(d => {
                 const isActive = d === targetDeptFilter;
                 return `
-                    <button onclick="setDeptFilter('${d}')" class="w-full flex justify-between items-center px-3 py-1.5 rounded-md font-medium text-left transition-colors ${isActive ? 'bg-white bg-opacity-80 text-custom-accent font-semibold shadow-sm' : 'text-[#424245] hover:bg-white hover:bg-opacity-30'}">
+                    <button onclick="setDeptFilter('${d}'); toggleSidebarMenu(false);" class="w-full flex justify-between items-center px-3 py-1.5 rounded-md font-medium text-left transition-colors ${isActive ? 'bg-white bg-opacity-80 text-custom-accent font-semibold shadow-sm' : 'text-[#424245] hover:bg-white hover:bg-opacity-30'}">
                         <span>${d}</span>
                         <span class="text-[10px] bg-gray-300 bg-opacity-40 text-gray-700 px-1.5 py-0.5 rounded-full">${d === 'All' ? masterRoster.length : masterRoster.filter(e => e.dept === d).length}</span>
                     </button>
