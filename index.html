@@ -3,147 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Schedule Planner</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Attendance — Daily Registry</title>
+    <!-- Tailwind CSS for rapid modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts alternative to approximate SF Pro text if not on a Mac -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F5F5F7; /* Apple's standard light background */
+        }
+        .apple-blur {
+            backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
 </head>
-<body>
-    <div class="app-window">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2><i class="fa-solid fa-layer-group text-primary"></i> MyPlanner</h2>
+<body class="text-[#1D1D1F] antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar Navigation (macOS Style) -->
+        <aside class="w-64 border-r border-[#D2D2D7] bg-[#EAEAEA] bg-opacity-50 p-6 flex flex-col justify-between hidden md:flex">
+            <div>
+                <!-- App Title -->
+                <div class="flex items-center space-x-2 px-2 mb-8">
+                    <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                    <span class="pl-2 font-semibold text-sm text-[#8E8E93]">Attendance</span>
+                </div>
+                
+                <!-- Navigation Items -->
+                <nav class="space-y-1">
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-white bg-opacity-60 rounded-lg text-sm font-medium shadow-sm text-[#007AFF]">
+                        <span>Today's Log</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-[#424245] hover:bg-white hover:bg-opacity-40 rounded-lg text-sm font-medium transition">
+                        <span>Analytics</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-[#424245] hover:bg-white hover:bg-opacity-40 rounded-lg text-sm font-medium transition">
+                        <span>Roster Management</span>
+                    </a>
+                </nav>
             </div>
             
-            <nav class="nav-menu">
-                <div class="nav-group-title">Views</div>
-                <button class="nav-item active" data-view="day">
-                    <i class="fa-solid fa-calendar-day"></i> <span class="nav-text">Day</span>
-                </button>
-                <button class="nav-item" data-view="week">
-                    <i class="fa-solid fa-table-columns"></i> <span class="nav-text">Week</span>
-                </button>
-                <button class="nav-item" data-view="month">
-                    <i class="fa-regular fa-calendar-days"></i> <span class="nav-text">Month</span>
-                </button>
-            </nav>
-
-            <div class="sidebar-actions">
-                <div class="stat-box">
-                    <span id="totalEventsStat">0</span>
-                    <label>Total Events</label>
+            <!-- User Profile Footer -->
+            <div class="flex items-center space-x-3 p-2 border-t border-[#D2D2D7] pt-4">
+                <div class="w-8 h-8 rounded-full bg-[#007AFF] text-white flex items-center justify-center font-bold text-xs">
+                    AD
                 </div>
-            </div>
-
-            <div class="sidebar-bottom">
-                 <button class="btn btn-outline danger" id="clearAllBtn" style="margin-bottom: 12px;">
-                    <i class="fa-solid fa-trash-can"></i> Clear All
-                 </button>
-                <button class="btn btn-primary add-task-btn" id="openModalBtn">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Add Event</span>
-                </button>
+                <div>
+                    <p class="text-xs font-semibold">Admin Dashboard</p>
+                    <p class="text-[10px] text-[#8E8E93]">HR Department</p>
+                </div>
             </div>
         </aside>
 
-        <!-- Main Workspace Area -->
-        <main class="main-content">
-            <header class="top-header">
-                <div class="header-left">
-                    <h1 id="headerTitle">Today</h1>
-                    <p id="currentFullDate">Date loading...</p>
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-y-auto bg-[#F5F5F7]">
+            
+            <!-- Top Glassmorphism Bar -->
+            <header class="apple-blur sticky top-0 z-10 px-8 py-5 border-b border-[#D2D2D7] flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Daily Registry</h1>
+                    <p class="text-xs text-[#8E8E93]" id="current-date">Wednesday, August 12, 2026</p>
                 </div>
-                <div class="header-right">
-                    <div class="time-widget" id="liveTime">00:00</div>
+                
+                <!-- Quick Search Input -->
+                <div class="relative">
+                    <input type="text" placeholder="Search roster..." class="w-64 px-3 py-1.5 bg-[#E3E3E6] focus:bg-white border-none rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#007AFF] transition">
                 </div>
             </header>
 
-            <div class="view-container">
-                <div id="viewWrapper" class="view-wrapper">
-                    <!-- Dynamic view content -->
+            <!-- Dashboard Body -->
+            <div class="p-8 max-w-5xl w-full mx-auto space-y-6">
+                
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Present Card -->
+                    <div class="bg-white p-5 rounded-2xl border border-[#E5E5EA] shadow-sm">
+                        <p class="text-xs font-medium text-[#8E8E93] uppercase tracking-wider">Present</p>
+                        <p class="text-3xl font-bold mt-2 text-[#34C759]">42 <span class="text-xs font-normal text-[#8E8E93]">/ 50 total</span></p>
+                    </div>
+                    <!-- Remote Card -->
+                    <div class="bg-white p-5 rounded-2xl border border-[#E5E5EA] shadow-sm">
+                        <p class="text-xs font-medium text-[#8E8E93] uppercase tracking-wider">Remote Work</p>
+                        <p class="text-3xl font-bold mt-2 text-[#007AFF]">6</p>
+                    </div>
+                    <!-- Absent Card -->
+                    <div class="bg-white p-5 rounded-2xl border border-[#E5E5EA] shadow-sm">
+                        <p class="text-xs font-medium text-[#8E8E93] uppercase tracking-wider">Absent</p>
+                        <p class="text-3xl font-bold mt-2 text-[#FF3B30]">2</p>
+                    </div>
                 </div>
+
+                <!-- Roster Table List -->
+                <div class="bg-white rounded-2xl border border-[#E5E5EA] shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#E5E5EA] flex justify-between items-center bg-[#FAFAFA]">
+                        <h3 class="font-semibold text-sm">Team Roster</h3>
+                        <span class="text-xs text-[#8E8E93]">8 unmarked profiles</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-[11px] font-semibold text-[#8E8E93] border-b border-[#E5E5EA] uppercase tracking-wider bg-[#FAFAFA]">
+                                    <th class="px-6 py-3">Employee</th>
+                                    <th class="px-6 py-3">Department</th>
+                                    <th class="px-6 py-3">Check-In Time</th>
+                                    <th class="px-6 py-3 text-right">Status Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E5E5EA] text-sm">
+                                <!-- Row 1 -->
+                                <tr class="hover:bg-[#F5F5F7] transition-colors">
+                                    <td class="px-6 py-4 font-medium flex items-center space-x-3">
+                                        <div class="w-7 h-7 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold">JH</div>
+                                        <span>Jane Hope</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-[#6E6E73]">Engineering</td>
+                                    <td class="px-6 py-4 text-[#6E6E73]">08:52 AM</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-2.5 py-1 text-xs font-medium bg-[#EEFBF1] text-[#248A3D] rounded-full">Present</span>
+                                    </td>
+                                </tr>
+                                <!-- Row 2 -->
+                                <tr class="hover:bg-[#F5F5F7] transition-colors">
+                                    <td class="px-6 py-4 font-medium flex items-center space-x-3">
+                                        <div class="w-7 h-7 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">MC</div>
+                                        <span>Marcus Chen</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-[#6E6E73]">Design Studio</td>
+                                    <td class="px-6 py-4 text-[#6E6E73]">09:15 AM</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-2.5 py-1 text-xs font-medium bg-[#E5F2FF] text-[#007AFF] rounded-full">Remote</span>
+                                    </td>
+                                </tr>
+                                <!-- Row 3 -->
+                                <tr class="hover:bg-[#F5F5F7] transition-colors">
+                                    <td class="px-6 py-4 font-medium flex items-center space-x-3">
+                                        <div class="w-7 h-7 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center text-xs font-bold">SR</div>
+                                        <span>Sarah Ross</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-[#6E6E73]">Marketing</td>
+                                    <td class="px-6 py-4 text-[#6E6E73]">—</td>
+                                    <td class="px-6 py-4 text-right space-x-1">
+                                        <!-- Interactive iOS Button Group Blueprint -->
+                                        <button class="px-3 py-1 text-xs font-medium bg-[#F5F5F7] hover:bg-[#E5E5EA] text-[#1D1D1F] rounded-md transition">Present</button>
+                                        <button class="px-3 py-1 text-xs font-medium bg-[#FFF2F1] hover:bg-[#FFE5E3] text-[#FF3B30] rounded-md transition">Absent</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
 
-    <!-- Event Action Modal (Delete) -->
-    <div class="modal-overlay" id="actionModal">
-        <div class="modal-content small-modal">
-            <h3 id="actionModalTitle">Manage Event</h3>
-            <p id="actionModalDesc" style="margin-bottom:24px; color:var(--text-secondary); font-size:14px;"></p>
-            <div style="display:flex; gap:12px; flex-direction:column;">
-                <button class="btn btn-danger" id="deleteEventBtn">
-                    <i class="fa-solid fa-trash"></i> Delete Event
-                </button>
-                <button class="btn btn-outline" id="closeActionModalBtn">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Schedule Modal -->
-    <div class="modal-overlay" id="taskModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fa-solid fa-calendar-plus" style="color:var(--primary); margin-right:8px;"></i> New Event</h2>
-                <button class="cancel-icon-btn" id="closeModalBtn" type="button"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="scheduleForm" class="schedule-form">
-                <div class="form-group">
-                    <label>Event Name</label>
-                    <input type="text" id="taskTitle" required placeholder="e.g. Doctor Appointment">
-                </div>
-                <div class="form-row">
-                    <div class="form-group flex-col">
-                        <label>Date</label>
-                        <input type="date" id="taskDate" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group flex-col">
-                        <label>Time</label>
-                        <input type="time" id="taskTime" required>
-                    </div>
-                    <div class="form-group flex-col">
-                        <label>Duration</label>
-                        <select id="taskDuration" required>
-                            <option value="15">15 min</option>
-                            <option value="30">30 min</option>
-                            <option value="45">45 min</option>
-                            <option value="60" selected>1 hour</option>
-                            <option value="90">1.5 hours</option>
-                            <option value="120">2 hours</option>
-                            <option value="240">4 hours</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group" style="padding-top: 10px;">
-                    <label>Category Color</label>
-                    <div class="category-segmented">
-                        <label class="seg-item">
-                            <input type="radio" name="category" value="blue" checked>
-                            <span class="seg-text" style="color:var(--cat-blue);"><i class="fa-solid fa-circle"></i> Blue</span>
-                        </label>
-                        <label class="seg-item">
-                            <input type="radio" name="category" value="green">
-                            <span class="seg-text" style="color:var(--cat-green);"><i class="fa-solid fa-circle"></i> Green</span>
-                        </label>
-                        <label class="seg-item">
-                            <input type="radio" name="category" value="red">
-                            <span class="seg-text" style="color:var(--cat-red);"><i class="fa-solid fa-circle"></i> Red</span>
-                        </label>
-                        <label class="seg-item">
-                            <input type="radio" name="category" value="purple">
-                            <span class="seg-text" style="color:var(--cat-purple);"><i class="fa-solid fa-circle"></i> Purple</span>
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary full-width submit-btn" style="margin-top: 10px;">
-                    Save to Schedule
-                </button>
-            </form>
-        </div>
-    </div>
-    
-    <script src="script.js"></script>
 </body>
 </html>
